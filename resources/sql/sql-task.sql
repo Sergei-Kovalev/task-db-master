@@ -153,3 +153,51 @@ OR tf.amount = (
 	SELECT MAX(amount)
 	FROM ticket_flights
 )
+
+-- 14. Написать DDL таблицы Customers, должны быть поля id, firstName, LastName, email, phone. Добавить ограничения на поля (constraints)
+
+--DROP TABLE IF EXISTS customers;
+
+CREATE TABLE customers (
+	id SERIAL NOT NULL,
+	first_name VARCHAR(30) NOT NULL,
+	last_name VARCHAR(50) NOT NULL,
+	email VARCHAR CONSTRAINT ensure_email CHECK(email ~* '^[A-Za-z]+[A-Za-z0-9.]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$'),
+	phone VARCHAR(30),
+	PRIMARY KEY (id)
+);
+
+-- 15. Написать DDL таблицы Orders, должен быть id, customerId, quantity. Должен быть внешний ключ на таблицу customers + constraints
+
+--DROP TABLE IF EXISTS orders;
+
+CREATE TABLE orders (
+	id SERIAL NOT NULL,
+	customer_id INTEGER NOT NULL,
+	quantity NUMERIC(10, 2) NOT NULL CONSTRAINT quantity_positive CHECK(quantity >= 0),
+	PRIMARY KEY(id),
+	FOREIGN KEY(customer_id) REFERENCES customers(id) ON DELETE RESTRICT
+);
+
+-- 16. Написать 5 insert в эти таблицы
+
+INSERT INTO customers(first_name, last_name, email, phone)
+VALUES
+	('Михаил', 'Кузнецов', 'mikola564@gmail.com', '+375 29 265-66-27'),
+	('Дмитрий', 'Кот', 'kot.meau@gmail.com', '+375 29 654-66-27'),
+	('Ольга', 'Шумелько', 'shumelO@gmail.com', '+375 29 546-66-27'),
+	('Семен', 'Демьяненко', 'demSem@gmail.com', '+375 29 123-66-27'),
+	('Дамблдор', 'Прилесский', 'dambledore@mor2.com', '+7 4429 56-66-27');
+
+INSERT INTO orders(customer_id, quantity)
+VALUES
+	(1 , 66.165),
+	(2, 500),
+	(3, 15.2),
+	(4, 355),
+	(3, 85);
+
+-- 17. Удалить таблицы
+
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS customers;
